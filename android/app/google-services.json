@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "257648965639",
+    "project_id": "androidnativebridge",
+    "storage_bucket": "androidnativebridge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:257648965639:android:561582d6215762dbbad2a2",
+        "android_client_info": {
+          "package_name": "com.androidnativebridge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANGjVS9i4qJF1cO-OqMDBG4xmXR4Yn9F4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
