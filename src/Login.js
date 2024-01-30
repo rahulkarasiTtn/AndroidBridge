@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import auth from '@react-native-firebase/auth';
-import {useNavigation} from '@react-navigation/native';
+import React, { useEffect, useState } from "react";
+import auth from "@react-native-firebase/auth";
+import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
   Text,
@@ -11,16 +11,18 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-} from 'react-native';
+  ActivityIndicator,
+} from "react-native";
 
 const Login = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const listener = DeviceEventEmitter.addListener('goToResult', comment => {
-      navigation.navigate('Result', {comment: comment, email: email});
+    const listener = DeviceEventEmitter.addListener("goToResult", (comment) => {
+      navigation.navigate("Result", { comment: comment, email: email });
     });
     return () => {
       listener.remove();
@@ -30,23 +32,26 @@ const Login = () => {
   const onPressLogin = async () => {
     if (email.length > 7 && password.length > 7) {
       try {
+        setLoading(true)
         let response = await auth().signInWithEmailAndPassword(email, password);
+        setLoading(false)
         if (response && response.user) {
           NativeModules.CustomModules.navigateToHome();
         }
       } catch (e) {
-        Alert.alert('Login Failed ', 'Your user ID or password is incorrect');
+        setLoading(false)
+        Alert.alert("Login Failed ", "Your user ID or password is incorrect");
       }
     } else {
-      Alert.alert('Email and Password must have at least 8 characters.');
+      Alert.alert("Email and Password must have at least 8 characters.");
     }
   };
 
-  const onChangeEmail = text => {
+  const onChangeEmail = (text) => {
     setEmail(text);
   };
 
-  const onChangePassword = text => {
+  const onChangePassword = (text) => {
     setPassword(text);
   };
 
@@ -71,8 +76,14 @@ const Login = () => {
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.8}
-          onPress={onPressLogin}>
-          <Text style={styles.btnText}>Log In</Text>
+          disabled={loading}
+          onPress={onPressLogin}
+        >
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <Text style={styles.btnText}>Log In</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -85,21 +96,21 @@ const styles = StyleSheet.create({
   },
   loginContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   heading: {
-    color: 'black',
+    color: "black",
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   subHeading: {
     marginBottom: 20,
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#eb2138',
-    width: '80%',
+    borderColor: "#eb2138",
+    width: "80%",
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 30,
@@ -107,23 +118,23 @@ const styles = StyleSheet.create({
   btnStyle: {
     padding: 5,
     width: 80,
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     margin: 10,
   },
   button: {
-    backgroundColor: '#eb2138',
-    width: '80%',
-    alignItems: 'center',
+    backgroundColor: "#eb2138",
+    width: "80%",
+    alignItems: "center",
     padding: 17,
     borderRadius: 5,
   },
   btnText: {
-    color: 'white',
+    color: "white",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 
