@@ -31,13 +31,11 @@ const Login = () => {
   }, [phoneNo]);
 
   const onPressButton = async () => {
-    console.log("Check phone nO and OTP", phoneNo, otp);
     if (otpSent) {
       setLoading(true);
       otpSent
         ?.confirm(otp)
         .then((res) => {
-          console.log(res);
           setLoading(false);
           NativeModules.CustomModules.navigateToHome();
           setOtpSent(false)
@@ -55,7 +53,6 @@ const Login = () => {
           .then((res) => {
             setOtpSent(res);
             setLoading(false);
-            console.log("===>>>", res);
           })
           .catch((error) => {
             console.log(error);
