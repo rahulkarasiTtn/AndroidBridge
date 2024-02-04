@@ -2,17 +2,17 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 const Result = ({route}) => {
-  const {comment, email} = route.params;
+  const {comment, phoneNo} = route.params;
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeTxt}>Welcome React Native</Text>
       <View style={styles.flexRow}>
-        <Text style={styles.heading}>User : </Text>
-        <Text>{email}</Text>
+        <Text style={styles.heading}>Phone No : </Text>
+        <Text style={styles.text}>{phoneNo}</Text>
       </View>
       <View style={styles.flexRow}>
         <Text style={styles.heading}>Comment : </Text>
-        <Text>{comment}</Text>
+        <Text style={styles.text}>{comment}</Text>
       </View>
     </View>
   );
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
   welcomeTxt: {
     fontSize: 28,
     fontWeight: '700',
+    color:'#263840'
   },
   heading: {
     fontSize: 20,
@@ -40,4 +41,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems:"baseline"
   },
+  text:{
+    color:'#263840',
+    fontWeight:'500'
+  }
 });

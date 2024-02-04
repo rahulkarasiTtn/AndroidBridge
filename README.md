@@ -1,4 +1,4 @@
 Credentials :
 
-id - rahul@gmail.com
-pass - Test@123
+Phone NO - 7457876321
+Otp - 123456

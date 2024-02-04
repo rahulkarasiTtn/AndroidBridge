@@ -17,42 +17,59 @@ import {
 const Login = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
 
   useEffect(() => {
     const listener = DeviceEventEmitter.addListener("goToResult", (comment) => {
-      navigation.navigate("Result", { comment: comment, email: email });
+      navigation.navigate("Result", { comment: comment, phoneNo: phoneNo });
     });
     return () => {
       listener.remove();
     };
-  }, [email]);
+  }, [phoneNo]);
 
-  const onPressLogin = async () => {
-    if (email.length > 7 && password.length > 7) {
-      try {
-        setLoading(true)
-        let response = await auth().signInWithEmailAndPassword(email, password);
-        setLoading(false)
-        if (response && response.user) {
+  const onPressButton = async () => {
+    console.log("Check phone nO and OTP", phoneNo, otp);
+    if (otpSent) {
+      setLoading(true);
+      otpSent
+        ?.confirm(otp)
+        .then((res) => {
+          console.log(res);
+          setLoading(false);
           NativeModules.CustomModules.navigateToHome();
-        }
-      } catch (e) {
-        setLoading(false)
-        Alert.alert("Login Failed ", "Your user ID or password is incorrect");
-      }
+          setOtpSent(false)
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          Alert.alert("Login Failed ", "Incorrect Otp");
+        });
     } else {
-      Alert.alert("Email and Password must have at least 8 characters.");
+      if (phoneNo.length === 10) {
+        setLoading(true);
+        auth()
+          .signInWithPhoneNumber(`+91 ${phoneNo}`)
+          .then((res) => {
+            setOtpSent(res);
+            setLoading(false);
+            console.log("===>>>", res);
+          })
+          .catch((error) => {
+            console.log(error);
+            setLoading(false);
+            Alert.alert("Login Failed ", "Please Enter valid Phone No");
+          });
+      } else {
+        Alert.alert("Login Failed ", "Please Enter valid Phone No");
+      }
     }
   };
 
-  const onChangeEmail = (text) => {
-    setEmail(text);
-  };
-
-  const onChangePassword = (text) => {
-    setPassword(text);
+  const onChange = (text) => {
+    otpSent ? setOtp(text) : setPhoneNo(text);
   };
 
   return (
@@ -60,29 +77,27 @@ const Login = () => {
       <View style={styles.loginContainer}>
         <Text style={styles.heading}>Log In Now</Text>
         <Text style={styles.subHeading}>
-          Please login to continue using app
+          {otpSent ? 'Please enter Otp to login' :'Please enter phone number to login'}
         </Text>
         <TextInput
           style={styles.textInput}
-          placeholder="Email"
-          onChangeText={onChangeEmail}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Password"
-          secureTextEntry
-          onChangeText={onChangePassword}
+          keyboardType="number-pad"
+          placeholder={otpSent ? "Enter otp" : "Phone No"}
+          placeholderTextColor={"grey"}
+          onChangeText={onChange}
         />
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.8}
           disabled={loading}
-          onPress={onPressLogin}
+          onPress={onPressButton}
         >
           {loading ? (
             <ActivityIndicator />
           ) : (
-            <Text style={styles.btnText}>Log In</Text>
+            <Text style={styles.btnText}>
+              {otpSent ? "Log In" : "Send Otp"}
+            </Text>
           )}
         </TouchableOpacity>
       </View>
@@ -106,6 +121,7 @@ const styles = StyleSheet.create({
   },
   subHeading: {
     marginBottom: 20,
+    color:'#263840'
   },
   textInput: {
     borderWidth: 1,
@@ -114,15 +130,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 30,
-  },
-  btnStyle: {
-    padding: 5,
-    width: 80,
-    backgroundColor: "blue",
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    margin: 10,
   },
   button: {
     backgroundColor: "#eb2138",
